@@ -1,0 +1,25 @@
+# 构建产物
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+*.user
+*.suo
+*.cache
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.sln.docstates
+
+# 日志与本地配置（敏感信息，勿上传）
+*.log
+routeagent.log
+config.yaml
+settings.json
+
+# 系统
+Thumbs.db
+.DS_Store

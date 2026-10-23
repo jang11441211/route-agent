@@ -1,0 +1,56 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- 深色调色板：只放颜色/画刷，样式见 Theme.xaml -->
+
+    <SolidColorBrush x:Key="BackgroundBrush" Color="#FF0A0C11" />
+    <SolidColorBrush x:Key="SurfaceBrush" Color="#FF12151C" />
+    <SolidColorBrush x:Key="SurfaceAltBrush" Color="#FF171B24" />
+    <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#FF1D2330" />
+    <SolidColorBrush x:Key="BorderBrush" Color="#FF242B3A" />
+    <SolidColorBrush x:Key="BorderStrongBrush" Color="#FF303A4E" />
+
+    <SolidColorBrush x:Key="TextBrush" Color="#FFE9EDF5" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#FFA3AEC4" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="#FF78839A" />
+
+    <SolidColorBrush x:Key="AccentBrush" Color="#FF4C8DFF" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="#FF6BA1FF" />
+    <SolidColorBrush x:Key="AccentSoftBrush" Color="#FF1E2A44" />
+    <SolidColorBrush x:Key="SuccessBrush" Color="#FF34D399" />
+    <SolidColorBrush x:Key="WarningBrush" Color="#FFF5A524" />
+    <SolidColorBrush x:Key="DangerBrush" Color="#FFF6547A" />
+
+    <!-- 结构色 -->
+    <SolidColorBrush x:Key="TitleBarBrush" Color="#FF0C0F16" />
+    <SolidColorBrush x:Key="SidebarBrush" Color="#FF0B0E14" />
+    <SolidColorBrush x:Key="SunkenBrush" Color="#FF0F131A" />
+    <SolidColorBrush x:Key="LogPanelBrush" Color="#FF07090D" />
+    <SolidColorBrush x:Key="NavHoverBrush" Color="#FF171C27" />
+
+    <SolidColorBrush x:Key="ScrollThumbBrush" Color="#FF343D52" />
+    <SolidColorBrush x:Key="ScrollThumbHoverBrush" Color="#FF4A5670" />
+    <SolidColorBrush x:Key="InputBorderHoverBrush" Color="#FF3C4761" />
+    <SolidColorBrush x:Key="ToggleTrackBrush" Color="#FF232A38" />
+    <SolidColorBrush x:Key="ToggleTrackBorderBrush" Color="#FF333C4F" />
+
+    <SolidColorBrush x:Key="DangerSoftBrush" Color="#FF3A1B26" />
+    <SolidColorBrush x:Key="DangerBorderBrush" Color="#FF663045" />
+    <SolidColorBrush x:Key="SuccessSoftBrush" Color="#FF10241C" />
+    <SolidColorBrush x:Key="TagBrush" Color="#FF1B2440" />
+
+    <SolidColorBrush x:Key="BannerWarnBackgroundBrush" Color="#FF1F1A0E" />
+    <SolidColorBrush x:Key="BannerWarnBorderBrush" Color="#FF3E3317" />
+    <SolidColorBrush x:Key="BannerWarnTextBrush" Color="#FFE8C179" />
+    <SolidColorBrush x:Key="BannerInfoBackgroundBrush" Color="#FF101A2B" />
+    <SolidColorBrush x:Key="BannerInfoBorderBrush" Color="#FF22344F" />
+    <SolidColorBrush x:Key="BannerInfoIconBrush" Color="#FF7FB0F0" />
+    <SolidColorBrush x:Key="BannerInfoTextBrush" Color="#FFA9C8EE" />
+
+    <LinearGradientBrush x:Key="WindowBackgroundBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FF0B0E15" Offset="0" />
+        <GradientStop Color="#FF0A0C11" Offset="0.55" />
+        <GradientStop Color="#FF0C1017" Offset="1" />
+    </LinearGradientBrush>
+
+</ResourceDictionary>

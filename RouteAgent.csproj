@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>RouteAgent</AssemblyName>
+    <RootNamespace>RouteAgent</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <SatelliteResourceLanguages>zh-Hans</SatelliteResourceLanguages>
+    <Version>1.0.0</Version>
+    <Product>RouteAgent</Product>
+    <AssemblyTitle>RouteAgent 应用分流</AssemblyTitle>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Assets\core\**\*" CopyToOutputDirectory="PreserveNewest" />
+    <Resource Include="Assets\app.ico" />
+  </ItemGroup>
+
+</Project>
