@@ -83,4 +83,4 @@ The project is WPF on .NET 10 (`net10.0-windows`), single project, no external N
 
 ## License
 
-No license has been added yet. Add one (e.g. MIT) before distributing or accepting contributions.
+[MIT](LICENSE) © 2026 jang11441211
