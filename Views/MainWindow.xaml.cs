@@ -201,7 +201,7 @@ public partial class MainWindow : Window
 
         try
         {
-            var rule = _vm.AddRuleFromExecutable(dialog.SelectedPath, dialog.SelectedAdapter);
+            var rule = _vm.AddRuleFromExecutable(dialog.SelectedPath, dialog.SelectedAdapter, dialog.IncludeChildren);
             Logger.Write($"已添加规则：{rule.ProcessName} → {rule.AdapterName}");
         }
         catch (Exception ex)

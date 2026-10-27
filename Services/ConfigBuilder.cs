@@ -1,4 +1,6 @@
+using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using RouteAgent.Models;
 
 namespace RouteAgent.Services;
@@ -99,6 +101,16 @@ public static class ConfigBuilder
             var processName = rule.ProcessName.Trim();
             if (!processName.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
                 processName += ".exe";
+
+            // 勾选“含子进程”时，先用安装目录正则覆盖同目录下的其它 exe，
+            // 再保留进程名规则兜底（程序被复制到别的目录时仍能命中）。
+            if (rule.IncludeChildren)
+            {
+                var dirPattern = BuildDirectoryPattern(rule.ExecutablePath);
+                if (dirPattern.Length > 0)
+                    sb.AppendLine($"  - PROCESS-PATH-REGEX,{dirPattern},{tag}");
+            }
+
             sb.AppendLine($"  - PROCESS-NAME,{processName},{tag}");
         }
         sb.AppendLine("  - MATCH,DIRECT");
@@ -108,4 +120,15 @@ public static class ConfigBuilder
 
     private static string Quote(string value)
         => "\"" + value.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
+
+    /// <summary>把程序所在目录转成大小写不敏感的路径正则，匹配该目录下的所有可执行文件。</summary>
+    private static string BuildDirectoryPattern(string executablePath)
+    {
+        if (string.IsNullOrWhiteSpace(executablePath)) return "";
+
+        var dir = Path.GetDirectoryName(executablePath);
+        if (string.IsNullOrWhiteSpace(dir)) return "";
+
+        return "(?i)^" + Regex.Escape(dir) + "\\\\.*";
+    }
 }

@@ -24,6 +24,85 @@
         <ControlTemplate x:Key="FlatTabControl" TargetType="TabControl">
             <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" />
         </ControlTemplate>
+
+        <!-- 规则分组的标题：网卡名 + 规则数 -->
+        <DataTemplate x:Key="RuleGroupHeader">
+            <StackPanel Orientation="Horizontal">
+                <Border Width="4" Height="16" CornerRadius="2"
+                        Background="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding Name}" FontSize="13.5" FontWeight="SemiBold"
+                           Margin="10,0,0,0" VerticalAlignment="Center" />
+                <Border Padding="8,1" Margin="10,0,0,0" CornerRadius="9"
+                        Background="{DynamicResource SurfaceAltBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                        VerticalAlignment="Center">
+                    <TextBlock Text="{Binding ItemCount, StringFormat={}{0} 条}" FontSize="11"
+                               Foreground="{DynamicResource TextMutedBrush}" />
+                </Border>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- 可折叠的分组：点标题展开 / 收起 -->
+        <Style x:Key="RuleGroupExpander" TargetType="Expander">
+            <Setter Property="IsExpanded" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Expander">
+                        <StackPanel>
+                            <ToggleButton x:Name="HeaderButton" Focusable="False" Cursor="Hand"
+                                          HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                          Content="{TemplateBinding Header}"
+                                          ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                          IsChecked="{Binding IsExpanded, Mode=TwoWay,
+                                                      RelativeSource={RelativeSource TemplatedParent}}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border x:Name="Bd" Background="Transparent" CornerRadius="8"
+                                                Padding="8,4" Margin="0,0,4,0">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Left" />
+                                                <Path x:Name="Chevron" Grid.Column="1" Margin="10,0,4,0"
+                                                      VerticalAlignment="Center"
+                                                      Data="M0,0 L4,4 L0,8"
+                                                      Stroke="{DynamicResource TextMutedBrush}" StrokeThickness="1.4"
+                                                      StrokeStartLineCap="Round" StrokeEndLineCap="Round">
+                                                    <Path.RenderTransform>
+                                                        <RotateTransform Angle="90" CenterX="2" CenterY="4" />
+                                                    </Path.RenderTransform>
+                                                </Path>
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="Background"
+                                                        Value="{DynamicResource SurfaceHoverBrush}" />
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="False">
+                                                <Setter TargetName="Chevron" Property="RenderTransform">
+                                                    <Setter.Value>
+                                                        <RotateTransform Angle="0" CenterX="2" CenterY="4" />
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <ContentPresenter x:Name="Body" Visibility="Collapsed" Margin="0,2,0,0" />
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsExpanded" Value="True">
+                                <Setter TargetName="Body" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
@@ -262,7 +341,28 @@
 
                             <Grid Grid.Row="2">
                                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                    <ItemsControl ItemsSource="{Binding Rules}" Margin="0,0,4,0">
+                                    <ItemsControl ItemsSource="{Binding GroupedRules}" Margin="0,0,4,0">
+                                        <ItemsControl.GroupStyle>
+                                            <GroupStyle>
+                                                <GroupStyle.ContainerStyle>
+                                                    <Style TargetType="{x:Type GroupItem}">
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                                    <Expander Style="{StaticResource RuleGroupExpander}" IsExpanded="True">
+                                                                        <Expander.Header>
+                                                                            <ContentControl Content="{TemplateBinding Content}"
+                                                                                            ContentTemplate="{StaticResource RuleGroupHeader}" />
+                                                                        </Expander.Header>
+                                                                        <ItemsPresenter />
+                                                                    </Expander>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </GroupStyle.ContainerStyle>
+                                            </GroupStyle>
+                                        </ItemsControl.GroupStyle>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Border Style="{StaticResource Card}" Padding="14,12" Margin="0,0,0,8">
@@ -270,6 +370,7 @@
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="42" />
                                                             <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="104" />
                                                             <ColumnDefinition Width="196" />
                                                             <ColumnDefinition Width="52" />
                                                             <ColumnDefinition Width="34" />
@@ -296,18 +397,25 @@
                                                                        Margin="0,4,0,0" TextTrimming="CharacterEllipsis" />
                                                         </StackPanel>
 
-                                                        <ComboBox Grid.Column="2" Style="{StaticResource ComboBoxStyle}"
+                                                        <CheckBox Grid.Column="2" Style="{StaticResource CheckBoxStyle}"
+                                                                  Content="含子进程" FontSize="12"
+                                                                  IsChecked="{Binding IncludeChildren, Mode=TwoWay}"
+                                                                  IsEnabled="{Binding CanIncludeChildren}"
+                                                                  VerticalAlignment="Center" HorizontalAlignment="Left"
+                                                                  ToolTip="勾选后，该程序安装目录下的其它程序（子进程）也走这张网卡" />
+
+                                                        <ComboBox Grid.Column="3" Style="{StaticResource ComboBoxStyle}"
                                                                   Width="186" Height="32" VerticalAlignment="Center"
                                                                   ItemsSource="{Binding DataContext.Adapters, RelativeSource={RelativeSource AncestorType=Window}}"
                                                                   DisplayMemberPath="Display" SelectedValuePath="Name"
                                                                   SelectedValue="{Binding AdapterName, Mode=TwoWay}" />
 
-                                                        <CheckBox Grid.Column="3" Style="{StaticResource ToggleSwitch}"
+                                                        <CheckBox Grid.Column="4" Style="{StaticResource ToggleSwitch}"
                                                                   IsChecked="{Binding Enabled, Mode=TwoWay}"
                                                                   VerticalAlignment="Center" HorizontalAlignment="Center"
                                                                   ToolTip="启用 / 停用这条规则" />
 
-                                                        <Button Grid.Column="4" Style="{StaticResource IconButton}"
+                                                        <Button Grid.Column="5" Style="{StaticResource IconButton}"
                                                                 Click="RemoveRule_Click" ToolTip="删除规则"
                                                                 VerticalAlignment="Center" HorizontalAlignment="Right">
                                                             <Path Data="M2.5,4 H13.5 M6,4 V2.6 H10 V4 M4.2,4 L5,13.4 H11 L11.8,4 M7.2,6.6 V11.2 M9.8,6.6 V11.2"

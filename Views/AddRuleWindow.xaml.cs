@@ -23,6 +23,8 @@ public partial class AddRuleWindow : Window
 
     public string SelectedAdapter { get; private set; } = "";
 
+    public bool IncludeChildren => ChildrenCheck.IsChecked == true;
+
     private void Browse_Click(object sender, RoutedEventArgs e)
     {
         var dialog = new Microsoft.Win32.OpenFileDialog

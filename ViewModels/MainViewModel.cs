@@ -1,9 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows;
+using System.Windows.Data;
 using RouteAgent.Models;
 using RouteAgent.Services;
 using Application = System.Windows.Application;
@@ -36,6 +38,10 @@ public sealed class MainViewModel : ObservableObject
 
         foreach (var rule in Settings.Rules) Rules.Add(rule);
 
+        // 规则列表按出口网卡分组展示，网卡多的时侯比一长串卡片好读
+        GroupedRules = CollectionViewSource.GetDefaultView(Rules);
+        GroupedRules.GroupDescriptions.Add(new PropertyGroupDescription(nameof(RoutingRule.AdapterGroupName)));
+
         Rules.CollectionChanged += OnRulesChanged;
         foreach (var rule in Rules) rule.PropertyChanged += OnRuleChanged;
         Settings.PropertyChanged += (_, e) =>
@@ -58,6 +64,7 @@ public sealed class MainViewModel : ObservableObject
 
     public ObservableCollection<AdapterInfo> Adapters { get; } = new();
     public ObservableCollection<RoutingRule> Rules { get; } = new();
+    public ICollectionView GroupedRules { get; }
     public ObservableCollection<string> Logs { get; } = new();
 
     public event Action<string>? ErrorOccurred;
@@ -311,7 +318,7 @@ public sealed class MainViewModel : ObservableObject
         else await StartAsync();
     }
 
-    public RoutingRule AddRuleFromExecutable(string path, string adapterName)
+    public RoutingRule AddRuleFromExecutable(string path, string adapterName, bool includeChildren = false)
     {
         var processName = ProcessService.GetProcessNameFromPath(path);
         if (string.IsNullOrWhiteSpace(processName))
@@ -324,6 +331,7 @@ public sealed class MainViewModel : ObservableObject
         {
             existing.ExecutablePath = path;
             existing.AdapterName = adapterName;
+            existing.IncludeChildren = includeChildren;
             existing.Enabled = true;
             return existing;
         }
@@ -339,6 +347,7 @@ public sealed class MainViewModel : ObservableObject
                 : displayName,
             ExecutablePath = path,
             AdapterName = adapterName,
+            IncludeChildren = includeChildren,
             Icon = ProcessService.ExtractIcon(path),
         };
 
@@ -467,6 +476,9 @@ public sealed class MainViewModel : ObservableObject
 
     private void OnRuleChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
+        // 改了出口网卡就重新分组，让规则移动到对应的网卡分类下
+        if (e.PropertyName == nameof(RoutingRule.AdapterGroupName)) GroupedRules.Refresh();
+
         OnPropertyChanged(nameof(RuleSummary));
         Save();
     }

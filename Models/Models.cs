@@ -29,6 +29,7 @@ public sealed class RoutingRule : ObservableObject
     private string _executablePath = "";
     private string _adapterName = "";
     private bool _enabled = true;
+    private bool _includeChildren;
     private ImageSource? _icon;
 
     public string Id { get; set; } = Guid.NewGuid().ToString("N");
@@ -49,13 +50,19 @@ public sealed class RoutingRule : ObservableObject
     public string ExecutablePath
     {
         get => _executablePath;
-        set => Set(ref _executablePath, value);
+        set
+        {
+            if (Set(ref _executablePath, value)) OnPropertyChanged(nameof(CanIncludeChildren));
+        }
     }
 
     public string AdapterName
     {
         get => _adapterName;
-        set => Set(ref _adapterName, value);
+        set
+        {
+            if (Set(ref _adapterName, value)) OnPropertyChanged(nameof(AdapterGroupName));
+        }
     }
 
     public bool Enabled
@@ -63,6 +70,21 @@ public sealed class RoutingRule : ObservableObject
         get => _enabled;
         set => Set(ref _enabled, value);
     }
+
+    /// <summary>是否把该程序安装目录下的其它进程（子进程）也一并走同一张网卡。</summary>
+    public bool IncludeChildren
+    {
+        get => _includeChildren;
+        set => Set(ref _includeChildren, value);
+    }
+
+    /// <summary>没有可执行文件路径时无法按目录匹配子进程。</summary>
+    [JsonIgnore]
+    public bool CanIncludeChildren => !string.IsNullOrWhiteSpace(ExecutablePath);
+
+    /// <summary>规则列表的分组标题：按出口网卡归类，未选网卡的单独一组。</summary>
+    [JsonIgnore]
+    public string AdapterGroupName => string.IsNullOrWhiteSpace(AdapterName) ? "未分配网卡" : AdapterName;
 
     [JsonIgnore]
     public string Title => string.IsNullOrWhiteSpace(DisplayName) ? ProcessName : DisplayName;
